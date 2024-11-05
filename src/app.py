@@ -110,10 +110,6 @@ def submitGitName():
 
             news_info.append({"title": title, "url": url})
 
-            print(title)
-            print(url)
-            print("==========")
-
     else:
         print(f"Error: {response.status_code} - {response.text}")
 
