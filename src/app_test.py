@@ -5,8 +5,7 @@ def test_knows_about_dinosaurs():
     # if condition returns True, then nothing happens
     # if condition returns False, AssertionError is raised
     assert (
-        process_query("dinosaurs")
-        == "Dinosaurs ruled the Earth 200 million years ago"
+        process_query("dinosaurs") == "Dinosaurs ruled the Earth 200 million years ago"
     )
 
 

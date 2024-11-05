@@ -63,9 +63,7 @@ def submitGitName():
                     latest_commit_message = latest_commit["commit"][
                         "message"
                     ]  # Get the message
-                    latest_commit_author = latest_commit["commit"]["author"][
-                        "name"
-                    ]
+                    latest_commit_author = latest_commit["commit"]["author"]["name"]
                 else:
                     latest_commit_hash = None  # No commits found
                     latest_commit_message = None
@@ -94,7 +92,8 @@ def submitGitName():
 
     today_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 
-    url = f"https://newsapi.org/v2/everything?q=tesla&from={today_date}&sortBy=publishedAt&language=en&apiKey={api_key}"
+    url = f"https://newsapi.org/v2/everything?q=tesla&from={today_date}&sortBy\
+            =publishedAt&language=en&apiKey={api_key}"
 
     response = requests.get(url)
     news_info = []
