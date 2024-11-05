@@ -22,88 +22,108 @@ def submitGitName():
 
     if response.status_code == 200:
         repos = response.json()
-        
 
         for repo in repos:
             repo_name = repo["full_name"]
             repo_update = repo["updated_at"]
             star_count = repo["stargazers_count"]
-            
+
             print(repo_name)
             print(star_count)
 
-            languages_response = requests.get(f"https://api.github.com/repos/{repo_name}/languages")             
+            languages_response = requests.get(
+                f"https://api.github.com/repos/{repo_name}/languages"
+            )
             # Check if the languages request is successful
-            if languages_response.status_code == 200:                 
-                languages = languages_response.json()  # Parse JSON data into a dictionary of languages
-                # Get the names of the languages used                
-                language_names = list(languages.keys()) 
-                
-            else: 
-                language_names = [] # Empty list if unable to fetch languages
+            if languages_response.status_code == 200:
+                languages = (
+                    languages_response.json()
+                )  # Parse JSON data into a dictionary of languages
+                # Get the names of the languages used
+                language_names = list(languages.keys())
+
+            else:
+                language_names = []  # Empty list if unable to fetch languages
 
             # get commit list
-            commits_response = requests.get(f"https://api.github.com/repos/{repo_name}/commits")             
+            commits_response = requests.get(
+                f"https://api.github.com/repos/{repo_name}/commits"
+            )
             # Check if the commits request is successful
-            if commits_response.status_code == 200:                 
-                commits = commits_response.json()  # Parse JSON data into a list of commits
+            if commits_response.status_code == 200:
+                commits = (
+                    commits_response.json()
+                )  # Parse JSON data into a list of commits
                 # Get the latest commit hash
-                if commits:  
-                    latest_commit = commits[0]                  
-                    latest_commit_hash = latest_commit["sha"]  # Get the SHA of the latest commit
-                    latest_commit_message = latest_commit["commit"]["message"] # Get the message
-                    latest_commit_author = latest_commit["commit"]["author"]["name"]
+                if commits:
+                    latest_commit = commits[0]
+                    latest_commit_hash = latest_commit[
+                        "sha"
+                    ]  # Get the SHA of the latest commit
+                    latest_commit_message = latest_commit["commit"][
+                        "message"
+                    ]  # Get the message
+                    latest_commit_author = latest_commit["commit"]["author"][
+                        "name"
+                    ]
                 else:
-                    latest_commit_hash = None # No commits found
+                    latest_commit_hash = None  # No commits found
                     latest_commit_message = None
                     latest_commit_author = None
 
             else:
                 latest_commit_hash = None
-                latest_commit_message = None 
+                latest_commit_message = None
                 latest_commit_author = None
-            
+
             repo_info.append(
-                {"name": repo_name, "updated_at": repo_update,  
-                "latest_commit_hash": latest_commit_hash, 
-                "latest_commit_author": latest_commit_author,
-                "latest_commit_message": latest_commit_message, 
-                "stars": star_count,
-                "languages": language_names})
-                
- 
+                {
+                    "name": repo_name,
+                    "updated_at": repo_update,
+                    "latest_commit_hash": latest_commit_hash,
+                    "latest_commit_author": latest_commit_author,
+                    "latest_commit_message": latest_commit_message,
+                    "stars": star_count,
+                    "languages": language_names,
+                }
+            )
+
     print(response.status_code)
 
     api_key = "cd3e23354b084be3aa3d8929fb358c04"
- 
-    today_date = (datetime.now() - timedelta(days = 1)).strftime('%Y-%m-%d') 
- 
-    url = f'https://newsapi.org/v2/everything?q=tesla&from={today_date}&sortBy=publishedAt&language=en&apiKey={api_key}'
- 
+
+    today_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+
+    url = f"https://newsapi.org/v2/everything?q=tesla&from={today_date}&sortBy=publishedAt&language=en&apiKey={api_key}"
+
     response = requests.get(url)
     news_info = []
     if response.status_code == 200:
         news_data = response.json()
-        headlines = news_data.get('articles', [])
-    
+        headlines = news_data.get("articles", [])
+
         # Get the top 5 articles
         top_articles = headlines[:5]
-    
-        for article in top_articles:
-            title = article['title']
-            url = article['url']
 
-            news_info.append(
-                {"title": title, "url": url})
+        for article in top_articles:
+            title = article["title"]
+            url = article["url"]
+
+            news_info.append({"title": title, "url": url})
 
             print(title)
             print(url)
             print("==========")
-    
-    else:
-        print(f'Error: {response.status_code} - {response.text}')
 
-    return render_template("helloGit.html", gitname=input_name, repositories = repo_info, news = news_info)
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
+
+    return render_template(
+        "helloGit.html",
+        gitname=input_name,
+        repositories=repo_info,
+        news=news_info,
+    )
 
 
 # submit name and age
