@@ -22,7 +22,7 @@ def submitGitName():
         repo_info = []
 
         for repo in repos:
-            repo_name = repo["fullname"]
+            repo_name = repo["full_name"]
             repo_update = repo["updated_at"]
             star_count = repo["stargazers_count"]
 
@@ -70,8 +70,9 @@ def submitGitName():
             repo_info.append(
                 {"name": repo_name, "updated_at": repo_update,  
                 "collaborators": collaborator_names, "latest_commit_hash": latest_commit_hash, 
-                "latest_commit_message": latest_commit_message, "latest_commit_author": latest_commit_author}, 
-                "language": languages, "stars": star_count)
+                "latest_commit_message": latest_commit_message, "latest_commit_author": latest_commit_author, 
+                "language": languages, "stars": star_count})
+                
  
 
 
