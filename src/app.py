@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from datetime import datetime, timedelta
 import requests
 
 app = Flask(__name__)
@@ -17,14 +18,19 @@ def submitGitName():
     # sent the request to the github
     response = requests.get(f"https://api.github.com/users/{input_name}/repos")
 
+    repo_info = []
+
     if response.status_code == 200:
         repos = response.json()
-        repo_info = []
+        
 
         for repo in repos:
             repo_name = repo["full_name"]
             repo_update = repo["updated_at"]
             star_count = repo["stargazers_count"]
+            
+            print(repo_name)
+            print(star_count)
 
             languages_response = requests.get(f"https://api.github.com/repos/{repo_name}/languages")             
             # Check if the languages request is successful
@@ -35,16 +41,6 @@ def submitGitName():
                 
             else: 
                 language_names = [] # Empty list if unable to fetch languages
-
-            collaborators_response = requests.get(f"https://api.github.com/repos/{repo_name}/collaborators")             
-            # Check if the collaborators request is successful
-            if collaborators_response.status_code == 200:                 
-                collaborators = collaborators_response.json()  # Parse JSON data into a list of collaborators
-                # Extract collaborator names                
-                collaborator_names = [collaborator["login"] for collaborator in collaborators] 
-                
-            else: 
-                collaborator_names = [] # Empty list if unable to fetch collaborators
 
             # get commit list
             commits_response = requests.get(f"https://api.github.com/repos/{repo_name}/commits")             
@@ -69,14 +65,45 @@ def submitGitName():
             
             repo_info.append(
                 {"name": repo_name, "updated_at": repo_update,  
-                "collaborators": collaborator_names, "latest_commit_hash": latest_commit_hash, 
-                "latest_commit_message": latest_commit_message, "latest_commit_author": latest_commit_author, 
-                "language": languages, "stars": star_count})
+                "latest_commit_hash": latest_commit_hash, 
+                "latest_commit_author": latest_commit_author,
+                "latest_commit_message": latest_commit_message, 
+                "stars": star_count,
+                "languages": language_names})
                 
  
+    print(response.status_code)
 
+    api_key = "cd3e23354b084be3aa3d8929fb358c04"
+ 
+    today_date = (datetime.now() - timedelta(days = 1)).strftime('%Y-%m-%d') 
+ 
+    url = f'https://newsapi.org/v2/everything?q=tesla&from={today_date}&sortBy=publishedAt&language=en&apiKey={api_key}'
+ 
+    response = requests.get(url)
+    news_info = []
+    if response.status_code == 200:
+        news_data = response.json()
+        headlines = news_data.get('articles', [])
+    
+        # Get the top 5 articles
+        top_articles = headlines[:5]
+    
+        for article in top_articles:
+            title = article['title']
+            url = article['url']
 
-    return render_template("helloGit.html", gitname=input_name, repositories = repo_info)
+            news_info.append(
+                {"title": title, "url": url})
+
+            print(title)
+            print(url)
+            print("==========")
+    
+    else:
+        print(f'Error: {response.status_code} - {response.text}')
+
+    return render_template("helloGit.html", gitname=input_name, repositories = repo_info, news = news_info)
 
 
 # submit name and age
